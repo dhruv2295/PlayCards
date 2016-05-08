@@ -4,9 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -14,12 +14,15 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 
-public class MainActivity extends Activity implements FragmentManager.OnBackStackChangedListener,GestureDetector.OnDoubleTapListener{
+public class MainActivity extends Activity implements FragmentManager.OnBackStackChangedListener{
+//    ,GestureDetector.OnGestureListener
+//        ,GestureDetector.OnDoubleTapListener{
     private boolean mShowingBack = false;
     private Handler mHandler = new Handler();
 Integer[] order;
+    Context c;
     float dX, dY,centreX,centreY,screencx,screency;
-    private GestureDetector gestureDetector;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +35,7 @@ Integer[] order;
 //                    .add(R.id.container, new CardBackFragment())
 //                    .commit();
           order= shuffledeck.shuffle(images);
-            for(int i=0;i<4;i++)
+            for(int i=0;i<images.length;i++)
             newCard(i);
 
         } else {
@@ -71,21 +74,6 @@ Integer[] order;
         });
     }
 
-    @Override
-    public boolean onSingleTapConfirmed(MotionEvent e) {
-        return false;
-    }
-
-    @Override
-    public boolean onDoubleTap(MotionEvent e) {
-
-        return true;
-    }
-
-    @Override
-    public boolean onDoubleTapEvent(MotionEvent e) {
-        return false;
-    }
 
 
     /**
@@ -189,18 +177,30 @@ Integer[] order;
         // When the back stack changes, invalidate the options menu (action bar).
         invalidateOptionsMenu();
     }
-   private Integer[] images = {R.drawable.ace_of_clubs,
-                               R.drawable.ace_of_diamonds,
-                               R.drawable.ace_of_hearts,
-                               R.drawable.ace_of_spades
+   private Integer[] images = {R.drawable.ace_of_clubs,R.drawable.clubs_2,R.drawable.clubs_3,R.drawable.clubs_4,R.drawable.clubs_5,
+           R.drawable.clubs_6,R.drawable.clubs_7,R.drawable.clubs_8,R.drawable.clubs_9,R.drawable.clubs_10,R.drawable.jack_of_clubs2,
+           R.drawable.queen_of_clubs2,R.drawable.king_of_clubs2,
+
+                               R.drawable.ace_of_diamonds,R.drawable.diamond_2,R.drawable.diamond_3,R.drawable.diamond_4,R.drawable.diamond_5,
+           R.drawable.diamond_6,R.drawable.diamond_7,R.drawable.diamond_8,R.drawable.diamond_9,R.drawable.diamond_10,R.drawable.jack_of_diamonds2,
+           R.drawable.queen_of_diamonds2,R.drawable.king_of_diamonds2,
+
+                               R.drawable.ace_of_hearts,R.drawable.hearts_2,R.drawable.hearts_3,R.drawable.hearts_4,R.drawable.hearts_5,
+           R.drawable.hearts_6,R.drawable.hearts_7,R.drawable.hearts_8,R.drawable.hearts_9,R.drawable.hearts_10,R.drawable.jack_of_hearts2
+           ,R.drawable.queen_of_hearts2,R.drawable.king_of_hearts2,
+                               R.drawable.ace_of_spades,R.drawable.spades_2,R.drawable.spades_3,R.drawable.spades_4,R.drawable.spades_5
+           ,R.drawable.spades_6,R.drawable.spades_7,R.drawable.spades_8,R.drawable.spades_9,R.drawable.spades_10,R.drawable.jack_of_spades2
+           ,R.drawable.queen_of_spades2,R.drawable.king_of_spades2
    };
+
+    static int count=0;
+    static long startMillis=0;
     public void newCard(int i)
     {
+//        new DownloadImageTask().execute(order[i]);
 
-
-        float density = this.getResources().getDisplayMetrics().density;
+        final float density = this.getResources().getDisplayMetrics().density;
         int px = (int) (50 * density);
-        int px2 = (int) (5 * density);
 
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
         FrameLayout.LayoutParams lp =  new FrameLayout.LayoutParams(
@@ -208,78 +208,186 @@ Integer[] order;
 
         FrameLayout.LayoutParams lp2 =  new FrameLayout.LayoutParams(
                 FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        lp.setMargins(70,70,70,70);
-        lp2.setMargins(50,50,50,50);
-
-        final FrameLayout nestlayout = new FrameLayout(this);
-        nestlayout.setBackgroundColor(0xD3D3D3D3);
+        lp.setMargins(px,px,px,px);
+      //  lp2.setMargins(50,50,50,50);
+        final FrameLayout nestlayout;
+        nestlayout = new FrameLayout(this);
+        nestlayout.setBackgroundColor(0xe0e0e0);
         nestlayout.setLayoutParams(lp);
+//        nestlayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
-        final ImageView imageView = new ImageView(this);
-        imageView.setLayoutParams(lp2);
+       final ImageView imageView = new ImageView(this);
+        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        imageView.setBackgroundColor(0xe0e0e0);
+        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
         imageView.setImageResource(order[i]);
 
-        final ImageView imageView2 = new ImageView(this);
-        imageView2.setLayoutParams(lp2);
+       final ImageView imageView2 = new ImageView(this);
+        imageView2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+        imageView2.setBackgroundColor(0xe0e0e0);
+        imageView2.setScaleType(ImageView.ScaleType.FIT_XY);
         imageView2.setImageResource(R.drawable.card_back);
         imageView2.setVisibility(View.INVISIBLE);
 
         nestlayout.addView(imageView);
         nestlayout.addView(imageView2);
 
-        imageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        layout.addView(nestlayout);
 
-              if(imageView.getVisibility()==View.VISIBLE)
-               {
-                   imageView.setVisibility(View.INVISIBLE);
-                   imageView2.setVisibility(View.VISIBLE);
-               }
-            }
-        });
-        imageView2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+//        imageView.setOnTouchListener(new OnDoubleTapListener(this) {
+//
+//            @Override
+//            public void onDoubleTap(MotionEvent e) {
+//
+//                if(imageView.getVisibility()==View.VISIBLE) {
+//                    imageView.setVisibility(View.INVISIBLE);
+//                    imageView2.setVisibility(View.VISIBLE);
+//                }
+//                else
+//                {
+//                    imageView.setVisibility(View.VISIBLE);
+//                    imageView2.setVisibility(View.INVISIBLE);
+//                }
+//            }
+//
+//        });
 
-                if(imageView2.getVisibility()==View.VISIBLE) {
-                    imageView.setVisibility(View.VISIBLE);
-                    imageView2.setVisibility(View.INVISIBLE);
-                }
-            }
-        });
+//        nestlayout.setOnTouchListener(new OnDoubleTapListener(this) {
+//
+//            @Override
+//            public void onDoubleTap(MotionEvent event) {
+//                Log.d("Event",""+event.getAction());
+//
+//                if(imageView.getVisibility()==View.VISIBLE) {
+//                    imageView.setVisibility(View.INVISIBLE);
+//                    imageView2.setVisibility(View.VISIBLE);
+//                }
+//                else
+//                {
+//                    imageView.setVisibility(View.VISIBLE);
+//                    imageView2.setVisibility(View.INVISIBLE);
+//                }
+//            }
+////                @Override
+////            public void onLongPress(MotionEvent event)
+////            {
+////                Log.d("Down","Down");
+////                switch (event.getAction()) {
+////
+////                    case MotionEvent.ACTION_DOWN:
+////
+////                        dX = nestlayout.getX() - event.getRawX();
+////                        dY = nestlayout.getY() - event.getRawY();
+////
+////                        Log.d("Event","Start");
+////
+////                        break;
+////
+////                    case MotionEvent.ACTION_MOVE:
+////                        nestlayout.animate()
+////                                .x(event.getRawX() + dX)
+////                                .y(event.getRawY() + dY)
+////                                .setDuration(0)
+////                                .start();
+////
+////                        break;
+////
+////
+////                    default:
+//
+////                        return false;
+////                }
+////            }
+//        });
+
+
         nestlayout.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
 
-                switch (event.getAction()) {
+                switch (event.getAction()&MotionEvent.ACTION_MASK) {
+
+                    case MotionEvent.ACTION_UP:
+
+                        long time= System.currentTimeMillis();
+
+                        //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
+                        if (startMillis==0 || (time-startMillis>200) ) {
+                            startMillis=time;
+                            count=1;
+                         //   Log.d("Single","Single"+count);
+                        }
+                        //it is not the first, and it has been  less than 3 seconds since the first
+                        else{ //  time-startMillis< 3000
+                            count++;
+                           // Log.d("Single","Double"+count);
+                        }
+
+                        if (count==2) {
+                            //Log.d("Double","Double"+count);
+                            if(imageView.getVisibility()==View.VISIBLE) {
+
+                                imageView.setVisibility(View.INVISIBLE);
+                                imageView2.setVisibility(View.VISIBLE);
+                            }
+                            else
+                            {
+                                imageView.setVisibility(View.VISIBLE);
+                                imageView2.setVisibility(View.INVISIBLE);
+                            }
+                        }
+                        break;
+
+
 
 
                     case MotionEvent.ACTION_DOWN:
 
                         dX = nestlayout.getX() - event.getRawX();
                         dY = nestlayout.getY() - event.getRawY();
+
+
                         break;
 
-                    case MotionEvent.ACTION_MOVE:
 
+
+                    case MotionEvent.ACTION_MOVE:
                         nestlayout.animate()
                                 .x(event.getRawX() + dX)
                                 .y(event.getRawY() + dY)
                                 .setDuration(0)
                                 .start();
+                        break;
 
-                            break;
 
                     default:
+
                         return false;
                 }
+
                 return true;
             }
         });
 
-        layout.addView(nestlayout);
+
     }
 
+//    private class DownloadImageTask extends AsyncTask<Integer, Void, ImageView> {
+//        /** The system calls this to perform work in a worker thread and
+//         * delivers it the parameters given to AsyncTask.execute() */
+//
+//        @Override
+//        protected ImageView doInBackground(Integer... params) {
+//
+//            return null;
+//        }
+//
+//        /** The system calls this to perform work in the UI thread and delivers
+//         * the result from doInBackground() */
+//        protected void onPostExecute(ImageView result) {
+//
+//            mImageView.setImageBitmap(result);
+//        }
+//    }
 }
