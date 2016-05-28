@@ -28,24 +28,24 @@ Integer[] order;
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+//        if (savedInstanceState == null) {
+////            getFragmentManager()
+////                    .beginTransaction()
+////                    .add(R.id.container, new CardBackFragment())
+////                    .commit();
+//
+//        } else {
+//            mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
+//        }
 
-        if (savedInstanceState == null) {
-//            getFragmentManager()
-//                    .beginTransaction()
-//                    .add(R.id.container, new CardBackFragment())
-//                    .commit();
-          order= shuffledeck.shuffle(images);
-            for(int i=0;i<images.length;i++)
+        order= shuffledeck.shuffle(images);
+        for(int i=0;i<52;i++)
             newCard(i);
 
-        } else {
-            mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
-        }
-
+//        newCard(0);
         // Monitor back stack changes to ensure the action bar shows the appropriate.
         // button (either "photo" or "info").
-        getFragmentManager().addOnBackStackChangedListener(this);
-
+//        getFragmentManager().addOnBackStackChangedListener(this);
 
     }
 
@@ -177,6 +177,7 @@ Integer[] order;
         // When the back stack changes, invalidate the options menu (action bar).
         invalidateOptionsMenu();
     }
+
    private Integer[] images = {R.drawable.ace_of_clubs,R.drawable.clubs_2,R.drawable.clubs_3,R.drawable.clubs_4,R.drawable.clubs_5,
            R.drawable.clubs_6,R.drawable.clubs_7,R.drawable.clubs_8,R.drawable.clubs_9,R.drawable.clubs_10,R.drawable.jack_of_clubs2,
            R.drawable.queen_of_clubs2,R.drawable.king_of_clubs2,
@@ -193,115 +194,25 @@ Integer[] order;
            ,R.drawable.queen_of_spades2,R.drawable.king_of_spades2
    };
 
-    static int count=0;
-    static long startMillis=0;
+
     public void newCard(int i)
     {
-//        new DownloadImageTask().execute(order[i]);
-
-        final float density = this.getResources().getDisplayMetrics().density;
-        int px = (int) (50 * density);
-
         FrameLayout layout = (FrameLayout) findViewById(R.id.container);
-        FrameLayout.LayoutParams lp =  new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+      final FrameLayout view ;
+        LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        view = (FrameLayout) inflater.inflate(R.layout.cardview,layout,false);
 
-        FrameLayout.LayoutParams lp2 =  new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
-        lp.setMargins(px,px,px,px);
-      //  lp2.setMargins(50,50,50,50);
-        final FrameLayout nestlayout;
-        nestlayout = new FrameLayout(this);
-        nestlayout.setBackgroundColor(0xe0e0e0);
-        nestlayout.setLayoutParams(lp);
-//        nestlayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-
-       final ImageView imageView = new ImageView(this);
-        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        imageView.setBackgroundColor(0xe0e0e0);
-        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+        final  ImageView imageView;
+        imageView = (ImageView) view.findViewById(R.id.front);
+        imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView.setImageResource(order[i]);
 
-       final ImageView imageView2 = new ImageView(this);
-        imageView2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        imageView2.setBackgroundColor(0xe0e0e0);
-        imageView2.setScaleType(ImageView.ScaleType.FIT_XY);
+      final  ImageView imageView2 = (ImageView) view.findViewById(R.id.back);
+        imageView2.setScaleType(ImageView.ScaleType.CENTER_CROP);
         imageView2.setImageResource(R.drawable.card_back);
-        imageView2.setVisibility(View.INVISIBLE);
 
-        nestlayout.addView(imageView);
-        nestlayout.addView(imageView2);
-
-        layout.addView(nestlayout);
-
-//        imageView.setOnTouchListener(new OnDoubleTapListener(this) {
-//
-//            @Override
-//            public void onDoubleTap(MotionEvent e) {
-//
-//                if(imageView.getVisibility()==View.VISIBLE) {
-//                    imageView.setVisibility(View.INVISIBLE);
-//                    imageView2.setVisibility(View.VISIBLE);
-//                }
-//                else
-//                {
-//                    imageView.setVisibility(View.VISIBLE);
-//                    imageView2.setVisibility(View.INVISIBLE);
-//                }
-//            }
-//
-//        });
-
-//        nestlayout.setOnTouchListener(new OnDoubleTapListener(this) {
-//
-//            @Override
-//            public void onDoubleTap(MotionEvent event) {
-//                Log.d("Event",""+event.getAction());
-//
-//                if(imageView.getVisibility()==View.VISIBLE) {
-//                    imageView.setVisibility(View.INVISIBLE);
-//                    imageView2.setVisibility(View.VISIBLE);
-//                }
-//                else
-//                {
-//                    imageView.setVisibility(View.VISIBLE);
-//                    imageView2.setVisibility(View.INVISIBLE);
-//                }
-//            }
-////                @Override
-////            public void onLongPress(MotionEvent event)
-////            {
-////                Log.d("Down","Down");
-////                switch (event.getAction()) {
-////
-////                    case MotionEvent.ACTION_DOWN:
-////
-////                        dX = nestlayout.getX() - event.getRawX();
-////                        dY = nestlayout.getY() - event.getRawY();
-////
-////                        Log.d("Event","Start");
-////
-////                        break;
-////
-////                    case MotionEvent.ACTION_MOVE:
-////                        nestlayout.animate()
-////                                .x(event.getRawX() + dX)
-////                                .y(event.getRawY() + dY)
-////                                .setDuration(0)
-////                                .start();
-////
-////                        break;
-////
-////
-////                    default:
-//
-////                        return false;
-////                }
-////            }
-//        });
-
-
-        nestlayout.setOnTouchListener(new View.OnTouchListener() {
+        layout.addView(view);
+        view.setOnTouchListener(new View.OnTouchListener() {
 
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -316,18 +227,17 @@ Integer[] order;
                         if (startMillis==0 || (time-startMillis>200) ) {
                             startMillis=time;
                             count=1;
-                         //   Log.d("Single","Single"+count);
+//                               Log.d("Single","Single"+count);
                         }
                         //it is not the first, and it has been  less than 3 seconds since the first
                         else{ //  time-startMillis< 3000
                             count++;
-                           // Log.d("Single","Double"+count);
+//                             Log.d("Single","Double"+count);
                         }
 
                         if (count==2) {
-                            //Log.d("Double","Double"+count);
+//                            Log.d("Double","Double"+count);
                             if(imageView.getVisibility()==View.VISIBLE) {
-
                                 imageView.setVisibility(View.INVISIBLE);
                                 imageView2.setVisibility(View.VISIBLE);
                             }
@@ -339,21 +249,16 @@ Integer[] order;
                         }
                         break;
 
-
-
-
                     case MotionEvent.ACTION_DOWN:
 
-                        dX = nestlayout.getX() - event.getRawX();
-                        dY = nestlayout.getY() - event.getRawY();
+                        dX = view.getX() - event.getRawX();
+                        dY = view.getY() - event.getRawY();
 
 
                         break;
 
-
-
                     case MotionEvent.ACTION_MOVE:
-                        nestlayout.animate()
+                        view.animate()
                                 .x(event.getRawX() + dX)
                                 .y(event.getRawY() + dY)
                                 .setDuration(0)
@@ -373,21 +278,188 @@ Integer[] order;
 
     }
 
-//    private class DownloadImageTask extends AsyncTask<Integer, Void, ImageView> {
-//        /** The system calls this to perform work in a worker thread and
-//         * delivers it the parameters given to AsyncTask.execute() */
+    static int count=0;
+    static long startMillis=0;
+
+
+//    public void newCard(int i)
+//    {
+////        new DownloadImageTask().execute(order[i]);
 //
-//        @Override
-//        protected ImageView doInBackground(Integer... params) {
+//        final float density = this.getResources().getDisplayMetrics().density;
+//        int px = (int) (50 * density);
 //
-//            return null;
-//        }
+//        FrameLayout layout = (FrameLayout) findViewById(R.id.container);
+//        FrameLayout.LayoutParams lp =  new FrameLayout.LayoutParams(
+//                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
 //
-//        /** The system calls this to perform work in the UI thread and delivers
-//         * the result from doInBackground() */
-//        protected void onPostExecute(ImageView result) {
+//        FrameLayout.LayoutParams lp2 =  new FrameLayout.LayoutParams(
+//                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT);
+//        lp.setMargins(px,px,px,px);
+//      //  lp2.setMargins(50,50,50,50);
+//        final FrameLayout nestlayout;
+//        nestlayout = new FrameLayout(this);
+//        nestlayout.setBackgroundColor(0xe0e0e0);
+//        nestlayout.setLayoutParams(lp);
+////        nestlayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 //
-//            mImageView.setImageBitmap(result);
-//        }
+//       final ImageView imageView = new ImageView(this);
+//        imageView.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//        imageView.setBackgroundColor(0xe0e0e0);
+//        imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+//        imageView.setImageResource(order[i]);
+////        Picasso.with(c).load(order[i]).fit().into(imageView);
+//
+//       final ImageView imageView2 = new ImageView(this);
+//        imageView2.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
+//        imageView2.setBackgroundColor(0xe0e0e0);
+//        imageView2.setScaleType(ImageView.ScaleType.FIT_XY);
+//        imageView2.setImageResource(R.drawable.card_back);
+//        imageView2.setVisibility(View.INVISIBLE);
+//
+//        nestlayout.addView(imageView);
+//        nestlayout.addView(imageView2);
+//
+//        layout.addView(nestlayout);
+//
+////        imageView.setOnTouchListener(new OnDoubleTapListener(this) {
+////
+////            @Override
+////            public void onDoubleTap(MotionEvent e) {
+////
+////                if(imageView.getVisibility()==View.VISIBLE) {
+////                    imageView.setVisibility(View.INVISIBLE);
+////                    imageView2.setVisibility(View.VISIBLE);
+////                }
+////                else
+////                {
+////                    imageView.setVisibility(View.VISIBLE);
+////                    imageView2.setVisibility(View.INVISIBLE);
+////                }
+////            }
+////
+////        });
+//
+////        nestlayout.setOnTouchListener(new OnDoubleTapListener(this) {
+////
+////            @Override
+////            public void onDoubleTap(MotionEvent event) {
+////                Log.d("Event",""+event.getAction());
+////
+////                if(imageView.getVisibility()==View.VISIBLE) {
+////                    imageView.setVisibility(View.INVISIBLE);
+////                    imageView2.setVisibility(View.VISIBLE);
+////                }
+////                else
+////                {
+////                    imageView.setVisibility(View.VISIBLE);
+////                    imageView2.setVisibility(View.INVISIBLE);
+////                }
+////            }
+//////                @Override
+//////            public void onLongPress(MotionEvent event)
+//////            {
+//////                Log.d("Down","Down");
+//////                switch (event.getAction()) {
+//////
+//////                    case MotionEvent.ACTION_DOWN:
+//////
+//////                        dX = nestlayout.getX() - event.getRawX();
+//////                        dY = nestlayout.getY() - event.getRawY();
+//////
+//////                        Log.d("Event","Start");
+//////
+//////                        break;
+//////
+//////                    case MotionEvent.ACTION_MOVE:
+//////                        nestlayout.animate()
+//////                                .x(event.getRawX() + dX)
+//////                                .y(event.getRawY() + dY)
+//////                                .setDuration(0)
+//////                                .start();
+//////
+//////                        break;
+//////
+//////
+//////                    default:
+////
+//////                        return false;
+//////                }
+//////            }
+////        });
+//
+//
+//        nestlayout.setOnTouchListener(new View.OnTouchListener() {
+//
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//
+//                switch (event.getAction()&MotionEvent.ACTION_MASK) {
+//
+//                    case MotionEvent.ACTION_UP:
+//
+//                        long time= System.currentTimeMillis();
+//
+//                        //if it is the first time, or if it has been more than 3 seconds since the first tap ( so it is like a new try), we reset everything
+//                        if (startMillis==0 || (time-startMillis>200) ) {
+//                            startMillis=time;
+//                            count=1;
+//                         //   Log.d("Single","Single"+count);
+//                        }
+//                        //it is not the first, and it has been  less than 3 seconds since the first
+//                        else{ //  time-startMillis< 3000
+//                            count++;
+//                           // Log.d("Single","Double"+count);
+//                        }
+//
+//                        if (count==2) {
+//                            //Log.d("Double","Double"+count);
+//                            if(imageView.getVisibility()==View.VISIBLE) {
+//
+//                                imageView.setVisibility(View.INVISIBLE);
+//                                imageView2.setVisibility(View.VISIBLE);
+//                            }
+//                            else
+//                            {
+//                                imageView.setVisibility(View.VISIBLE);
+//                                imageView2.setVisibility(View.INVISIBLE);
+//                            }
+//                        }
+//                        break;
+//
+//
+//
+//
+//                    case MotionEvent.ACTION_DOWN:
+//
+//                        dX = nestlayout.getX() - event.getRawX();
+//                        dY = nestlayout.getY() - event.getRawY();
+//
+//
+//                        break;
+//
+//
+//
+//                    case MotionEvent.ACTION_MOVE:
+//                        nestlayout.animate()
+//                                .x(event.getRawX() + dX)
+//                                .y(event.getRawY() + dY)
+//                                .setDuration(0)
+//                                .start();
+//                        break;
+//
+//
+//                    default:
+//
+//                        return false;
+//                }
+//
+//                return true;
+//            }
+//        });
+//
+//
 //    }
+
+
 }
